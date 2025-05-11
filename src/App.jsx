@@ -44,7 +44,8 @@ const goHome = () => {
 
   return (
     <div>
-        <h1 onClick={goHome} style={{ cursor: "pointer", color: "#0077cc" }}>PUTTING</h1>
+			<h1 onClick={goHome} style={{ cursor: "pointer", color: "#0077cc" }}>write here:</h1>
+			<img src="./images/icon-moon-day.svg" alt="" width="100" height="100"/>
       <Form
         pg={pg}
         handleInputChange={handleInputChange}
