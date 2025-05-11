@@ -1,35 +1,79 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { HashRouter, Routes, Route, useNavigate, useParams, Outlet } from 'react-router-dom';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
 
+export function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />}>
+          <Route path=":pg" element={<AboutPage />} />
+        </Route>
+      </Routes>
+    </HashRouter>
+  );
 }
 
-export default App
+
+function HomePage() {
+  const { pg: urlParam } = useParams();
+  const [pg, setPg] = useState(urlParam || "");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (urlParam !== undefined) {
+      setPg(urlParam);
+    }
+  }, [urlParam]);
+
+const goHome = () => {
+    navigate("/");
+    setPg(""); 
+  };
+
+
+  const handleInputChange = (e) => {
+    setPg(e.target.value);
+  };
+
+  const goToDynamicPage = (e) => {
+    e.preventDefault();
+    if (pg) navigate(`/${pg}`);
+  };
+
+  return (
+    <div>
+        <h1 onClick={goHome} style={{ cursor: "pointer", color: "#0077cc" }}>THIS IS IT</h1>
+      <Form
+        pg={pg}
+        handleInputChange={handleInputChange}
+        goToDynamicPage={goToDynamicPage}
+      />
+      <Outlet />
+    </div>
+  );
+}
+
+
+function Form({ pg, handleInputChange, goToDynamicPage }) {
+  return (
+    <form onSubmit={goToDynamicPage}>
+      <input
+        type="text"
+        value={pg}
+        onChange={handleInputChange}
+        placeholder="Enter page name"
+      />
+    </form>
+  );
+}
+
+function AboutPage() {
+  const { pg } = useParams();
+  return (
+    <div>
+      <h1>Dynamic Page: {pg}</h1>
+    </div>
+  );
+}
