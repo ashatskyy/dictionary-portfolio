@@ -74,7 +74,8 @@ function AboutPage() {
   const { pg } = useParams();
   return (
     <div>
-      <h1>Dynamic Page: {pg}</h1>
+			<h1>Dynamic Page: {pg}</h1>
+				<img src="./images/icon-moon-day.svg" alt="" width="100" height="100"/>
     </div>
   );
 }
