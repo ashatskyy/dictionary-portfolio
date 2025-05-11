@@ -44,7 +44,7 @@ const goHome = () => {
 
   return (
     <div>
-        <h1 onClick={goHome} style={{ cursor: "pointer", color: "#0077cc" }}>THIS IS IT</h1>
+        <h1 onClick={goHome} style={{ cursor: "pointer", color: "#0077cc" }}>PUTTING</h1>
       <Form
         pg={pg}
         handleInputChange={handleInputChange}
