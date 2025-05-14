@@ -9,6 +9,10 @@ import {
 import { useState } from "react";
 import { useEffect } from "react";
 
+
+import { SetObjectWord } from "./models/SetObjectWord";
+import { populateWordFromData } from "./utils/populateWordFromData";
+
 export function App() {
   return (
     <HashRouter>
@@ -24,28 +28,39 @@ function HomePage() {
   const navigate = useNavigate();
 	const { pageDynamicalAddress } = useParams();
 	
-  const [inputedString, setInputedString] = useState(
+  const [inputedOrAddressString, setInputedOrAddressString] = useState(
     pageDynamicalAddress || ""
   );
 
+
+
+
+
   useEffect(() => {
    
-    setInputedString(pageDynamicalAddress || "");
+		setInputedOrAddressString(pageDynamicalAddress || "");
+
   }, [pageDynamicalAddress]);
 
-  const handleInputChange = (e) => setInputedString(e.target.value);
+	
+
+
+
 
   const enterInputString = (e) => {
     e.preventDefault();
-    const cleanedInput = inputedString.trim();
+    const cleanedInput = inputedOrAddressString.trim();
     if (cleanedInput && cleanedInput !== pageDynamicalAddress) {
       navigate(`/${cleanedInput}`);
     }
   };
 
+  const handleInputChange = (e) => setInputedOrAddressString(e.target.value);
+
+
   const goHome = () => {
     navigate("/");
-    setInputedString(""); 
+    setInputedOrAddressString(""); 
   };
 
   return (
@@ -56,7 +71,7 @@ function HomePage() {
       <form onSubmit={enterInputString}>
         <input
           type="text"
-          value={inputedString}
+          value={inputedOrAddressString}
           onChange={handleInputChange}
           placeholder="Search for any word…"
         />
@@ -70,9 +85,34 @@ function HomePage() {
 }
 
 function OutputWindow({ stringForSearch }) {
+  const [fetchedData, setFetchedData] = useState(null);
+
+  useEffect(() => {
+    if (!stringForSearch.trim()) return;
+
+    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${stringForSearch}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!Array.isArray(data)) {
+          setFetchedData(data);
+        } else {
+          const word = new SetObjectWord();
+          setFetchedData(populateWordFromData(data, word));
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [stringForSearch]);
+
+  useEffect(() => {
+    console.log("Fetched data updated:", fetchedData);
+  }, [fetchedData]);
+
   return (
     <div>
-      <h1>Search Result: {stringForSearch}</h1>
+      <h1>Search Request: {stringForSearch}</h1>
+      <p>Search Result: <b>{fetchedData?.word || fetchedData?.title}</b></p>
     </div>
   );
 }
